@@ -1,10 +1,11 @@
 from fastapi import APIRouter
-from .schemas import CalculateRequest, CalculateResponse,\
-    InsuranceResponseList, InsuranceResponse
+from .schemas import CalculateRequest, CalculateResponse, InsuranceResponseList
 from .services import Service
+from .utils import formatted_response
+from app.database import CargoTypes
 
 
-router = APIRouter(prefix='/api/v1/insurance')
+router = APIRouter(prefix='/api/v1/insurance', tags=['insurance'])
 
 
 class InsuranceService:
@@ -17,10 +18,12 @@ class InsuranceService:
 
     @staticmethod
     @router.get('/all_by_cargo_type', response_model=InsuranceResponseList)
-    async def all_by_cargo_type(cargo_type: str) -> InsuranceResponseList:
+    async def all_by_cargo_type(cargo_type: CargoTypes) -> InsuranceResponseList:
         cargo_types = await Service.all_by_cargo_type(cargo_type)
-        return InsuranceResponseList(cargo_types=[InsuranceResponse(
-            cargo_type=item.cargo_type,
-            rate=item.rate,
-            date=item.date
-        ) for item in cargo_types])
+        return await formatted_response(cargo_types)
+
+    @staticmethod
+    @router.get('all', response_model=InsuranceResponseList)
+    async def all_insurance() -> InsuranceResponseList:
+        insurances = await Service.all_insurance()
+        return await formatted_response(insurances)
