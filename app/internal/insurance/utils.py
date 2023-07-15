@@ -2,12 +2,24 @@ from functools import wraps
 from abc import ABCMeta, abstractmethod
 from fastapi import HTTPException, status
 from tortoise.exceptions import DoesNotExist
+from .schemas import InsuranceResponseList, InsuranceResponse
 
 
-def doesnt_exist(message):
+async def formatted_response(insurances: list) -> InsuranceResponseList:
+    """Format a response"""
+    return InsuranceResponseList(cargo_types=[InsuranceResponse(
+        cargo_type=item.cargo_type,
+        rate=item.rate,
+        date=item.date
+    ) for item in insurances])
 
-    def decorator(func):
 
+class InsuranceDoesNotExist:
+
+    def __init__(self, message):
+        self.message = message
+
+    def __call__(self, func):
         @wraps(func)
         async def wrapper(*args, **kwargs):
             try:
@@ -15,11 +27,9 @@ def doesnt_exist(message):
             except DoesNotExist:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=message.format(args[0].cargo_type.value, args[0].date)
+                    detail=self.message.format(args[1].cargo_type.value, args[1].date)
                 )
         return wrapper
-
-    return decorator
 
 
 class MainService(metaclass=ABCMeta):
