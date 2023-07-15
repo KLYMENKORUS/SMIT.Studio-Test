@@ -1,4 +1,5 @@
 from functools import wraps
+from abc import ABCMeta, abstractmethod
 from fastapi import HTTPException, status
 from tortoise.exceptions import DoesNotExist
 
@@ -19,5 +20,22 @@ def doesnt_exist(message):
         return wrapper
 
     return decorator
+
+
+class MainService(metaclass=ABCMeta):
+
+    @abstractmethod
+    async def calculate_insurance(self, data):
+        ...
+
+    @abstractmethod
+    async def all_by_cargo_type(self, cargo_type):
+        ...
+
+    @abstractmethod
+    async def all_insurance(self):
+        ...
+
+
 
 
