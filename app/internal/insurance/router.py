@@ -14,7 +14,7 @@ class InsuranceService:
     @router.post('/calculate', response_model=CalculateResponse)
     async def calculate(data: CalculateRequest) -> CalculateResponse:
         insurance = await Service.calculate_insurance(data)
-        return CalculateResponse(insurance_value=insurance)
+        return CalculateResponse(insurance_value=round(insurance, 2))
 
     @staticmethod
     @router.get('/all_by_cargo_type', response_model=InsuranceResponseList)
@@ -23,7 +23,7 @@ class InsuranceService:
         return await formatted_response(cargo_types)
 
     @staticmethod
-    @router.get('all', response_model=InsuranceResponseList)
+    @router.get('/all', response_model=InsuranceResponseList)
     async def all_insurance() -> InsuranceResponseList:
         insurances = await Service.all_insurance()
         return await formatted_response(insurances)
