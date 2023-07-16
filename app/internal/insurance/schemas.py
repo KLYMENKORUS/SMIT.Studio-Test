@@ -15,9 +15,9 @@ class CalculateResponse(BaseModel):
 
 
 class InsuranceResponse(BaseModel):
-    cargo_type: str = Field(..., example='Glass')
-    rate: Decimal = Field(..., example=0.04)
-    date: datetime.date = Field(..., example=datetime.date(2023, 1, 1))
+    cargo_type: str = Field(..., examples=['Glass'])
+    rate: Decimal = Field(..., examples=[0.04])
+    date: datetime.date = Field(..., examples=[datetime.date(2023, 1, 1)])
 
 
 class InsuranceResponseList(BaseModel):
