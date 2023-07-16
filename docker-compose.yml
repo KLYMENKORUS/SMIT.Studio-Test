@@ -11,6 +11,23 @@ services:
       - .env
     ports:
       - '5438:5432'
+    networks:
+      - custom
+
+  postgres_test:
+    container_name: "SMIT_test"
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=SMIT_API_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5440
+      - POSTGRES_HOST=127.0.0.1
+    ports:
+      - "5440:5432"
+    networks:
+      - custom
 
 #  app:
 #    build:
@@ -21,6 +38,9 @@ services:
 #    restart: always
 #    ports:
 #      - "8000:8000"
+networks:
+  custom:
+    driver: bridge
 
 volumes:
   postgres_SMIT:
