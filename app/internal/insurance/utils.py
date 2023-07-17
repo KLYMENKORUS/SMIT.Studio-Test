@@ -2,21 +2,13 @@ from functools import wraps
 from abc import ABCMeta, abstractmethod
 from fastapi import HTTPException, status
 from tortoise.exceptions import DoesNotExist
-from .schemas import InsuranceResponseList, InsuranceResponse
+from app.database import Insurance
 
 
-async def formatted_response(insurances: list) -> InsuranceResponseList:
-    """Format a response"""
-    return InsuranceResponseList(cargo_types=[InsuranceResponse(
-        cargo_type=item.cargo_type,
-        rate=item.rate,
-        date=item.date
-    ) for item in insurances])
-
-
+# ********** DECORATORS **********
 class InsuranceDoesNotExist:
 
-    def __init__(self, message):
+    def __init__(self, message: str):
         self.message = message
 
     def __call__(self, func):
@@ -32,6 +24,26 @@ class InsuranceDoesNotExist:
         return wrapper
 
 
+class InsuranceExists:
+
+    def __init__(self, message: str):
+        self.message = message
+
+    def __call__(self, func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            if await Insurance.all().count():
+                raise HTTPException(
+                    status_code=status.HTTP_302_FOUND,
+                    detail=self.message
+                )
+            else:
+                return await func(*args, **kwargs)
+
+        return wrapper
+
+
+# ********** METACLASS **********
 class MainService(metaclass=ABCMeta):
 
     @abstractmethod
