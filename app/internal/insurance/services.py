@@ -1,10 +1,21 @@
 from decimal import Decimal
+
 from app.database import Insurance
 from .utils import MainService, InsuranceDoesNotExist
 from .schemas import CalculateRequest
+from app.configuration import settings
+from app.database import InitialInsurance
 
 
 class Service(MainService):
+
+    __initial = InitialInsurance(settings.JSON_FILE)
+
+    @classmethod
+    async def create_insurance(cls) -> None:
+        """Create a new insurance object"""
+
+        await cls.__initial.initialize()
 
     @classmethod
     @InsuranceDoesNotExist('There is no insurance with cargo type `{}` for date `{}`')

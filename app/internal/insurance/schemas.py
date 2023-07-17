@@ -1,5 +1,7 @@
 import datetime
 from decimal import Decimal
+from http import HTTPStatus
+
 from pydantic import BaseModel, Field
 from app.database import CargoTypes
 
@@ -22,4 +24,9 @@ class InsuranceResponse(BaseModel):
 
 class InsuranceResponseList(BaseModel):
     cargo_types: list[InsuranceResponse]
+
+
+class SuccessInsuranceCreate(BaseModel):
+    status: int = Field(..., examples=[HTTPStatus.OK])
+    message: str = Field(..., examples=['insurance successfully created'])
 
