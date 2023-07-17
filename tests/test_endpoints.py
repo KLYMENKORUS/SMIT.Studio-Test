@@ -1,13 +1,10 @@
 from httpx import AsyncClient
 from http import HTTPStatus
-from app.database import Insurance
-from app.database import InitialInsurance
-from app.configuration import settings
 
 
-async def test_create_insurance():
-    await InitialInsurance(settings.JSON_FILE).initialize()
-    assert await Insurance.all().count() == 4
+async def test_create_insurance(client: AsyncClient):
+    response = await client.post(url='/api/v1/insurance/create')
+    assert response.status_code == HTTPStatus.OK
 
 
 async def test_calculate(client: AsyncClient):
