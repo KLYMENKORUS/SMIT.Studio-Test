@@ -5,8 +5,6 @@ services:
     container_name: SMIT
     image: postgres:14.1-alpine
     restart: always
-    volumes:
-      - postgres_SMIT:/var/lib/postgresql/data/
     env_file:
       - .env
     ports:
@@ -29,18 +27,21 @@ services:
     networks:
       - custom
 
-#  app:
-#    build:
-#      context: .
-#      dockerfile: docker/Dockerfile
-#    depends_on:
-#      - postgres
-#    restart: always
-#    ports:
-#      - "8000:8000"
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/
+    ports:
+      - "8000:8000"
+    command: bash -c "aerich upgrade && uvicorn app:create_app --reload"
+
 networks:
   custom:
     driver: bridge
-
-volumes:
-  postgres_SMIT:
