@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     ports:
-      - '5438:5432'
+      - '5442:5432'
     networks:
       - custom
 
@@ -27,20 +27,20 @@ services:
     networks:
       - custom
 
-  api:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    restart: always
-    depends_on:
-      - postgres
-    env_file:
-      - .env
-    volumes:
-      - .:/usr/src/
-    ports:
-      - "8000:8000"
-    command: bash -c "aerich upgrade && uvicorn app:create_app --reload"
+#  api:
+#    build:
+#      context: .
+#      dockerfile: docker/Dockerfile
+#    restart: always
+#    depends_on:
+#      - postgres
+#    env_file:
+#      - .env
+#    volumes:
+#      - .:/usr/src/
+#    ports:
+#      - "8000:8000"
+#    command: bash -c "uvicorn app:create_app --host 0.0.0.0 --port 8000 --reload"
 
 networks:
   custom:
