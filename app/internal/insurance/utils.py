@@ -47,6 +47,10 @@ class InsuranceExists:
 class MainService(metaclass=ABCMeta):
 
     @abstractmethod
+    async def create_insurance(self):
+        ...
+
+    @abstractmethod
     async def calculate_insurance(self, data):
         ...
 
